@@ -1,0 +1,44 @@
+-- 書籍表
+CREATE TABLE IF NOT EXISTS books (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    author TEXT,
+    isbn TEXT,
+    total_pages INTEGER DEFAULT 0,
+    current_page INTEGER DEFAULT 0,
+    status TEXT NOT NULL DEFAULT '未讀',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 筆記表
+CREATE TABLE IF NOT EXISTS notes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    book_id INTEGER NOT NULL,
+    content TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (book_id) REFERENCES books (id) ON DELETE CASCADE
+);
+
+-- 標籤表
+CREATE TABLE IF NOT EXISTS tags (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE
+);
+
+-- 書籍標籤關聯表
+CREATE TABLE IF NOT EXISTS book_tags (
+    book_id INTEGER NOT NULL,
+    tag_id INTEGER NOT NULL,
+    PRIMARY KEY (book_id, tag_id),
+    FOREIGN KEY (book_id) REFERENCES books (id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES tags (id) ON DELETE CASCADE
+);
+
+-- 筆記標籤關聯表
+CREATE TABLE IF NOT EXISTS note_tags (
+    note_id INTEGER NOT NULL,
+    tag_id INTEGER NOT NULL,
+    PRIMARY KEY (note_id, tag_id),
+    FOREIGN KEY (note_id) REFERENCES notes (id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES tags (id) ON DELETE CASCADE
+);
