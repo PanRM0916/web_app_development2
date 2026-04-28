@@ -24,25 +24,56 @@ class Note(db.Model):
     # CRUD 方法
     @classmethod
     def create(cls, **kwargs):
-        note = cls(**kwargs)
-        db.session.add(note)
-        db.session.commit()
-        return note
+        """
+        針對特定書籍新增一筆筆記。
+        """
+        try:
+            note = cls(**kwargs)
+            db.session.add(note)
+            db.session.commit()
+            return note
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error creating note: {e}")
+            return None
 
     @classmethod
     def get_all(cls):
+        """
+        取得所有筆記記錄。
+        """
         return cls.query.all()
 
     @classmethod
     def get_by_id(cls, id):
+        """
+        根據 ID 取得單筆筆記記錄。
+        """
         return cls.query.get(id)
 
     def update(self, **kwargs):
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-        db.session.commit()
-        return self
+        """
+        更新筆記內容。
+        """
+        try:
+            for key, value in kwargs.items():
+                setattr(self, key, value)
+            db.session.commit()
+            return self
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error updating note: {e}")
+            return None
 
     def delete(self):
-        db.session.delete(self)
-        db.session.commit()
+        """
+        刪除筆記記錄。
+        """
+        try:
+            db.session.delete(self)
+            db.session.commit()
+            return True
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error deleting note: {e}")
+            return False

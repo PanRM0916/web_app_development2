@@ -30,25 +30,56 @@ class Book(db.Model):
     # CRUD 方法
     @classmethod
     def create(cls, **kwargs):
-        book = cls(**kwargs)
-        db.session.add(book)
-        db.session.commit()
-        return book
+        """
+        新增一筆書籍記錄。
+        """
+        try:
+            book = cls(**kwargs)
+            db.session.add(book)
+            db.session.commit()
+            return book
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error creating book: {e}")
+            return None
 
     @classmethod
     def get_all(cls):
+        """
+        取得所有書籍記錄。
+        """
         return cls.query.all()
 
     @classmethod
     def get_by_id(cls, id):
+        """
+        根據 ID 取得單筆書籍記錄。
+        """
         return cls.query.get(id)
 
     def update(self, **kwargs):
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-        db.session.commit()
-        return self
+        """
+        更新書籍記錄。
+        """
+        try:
+            for key, value in kwargs.items():
+                setattr(self, key, value)
+            db.session.commit()
+            return self
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error updating book: {e}")
+            return None
 
     def delete(self):
-        db.session.delete(self)
-        db.session.commit()
+        """
+        刪除書籍記錄。
+        """
+        try:
+            db.session.delete(self)
+            db.session.commit()
+            return True
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error deleting book: {e}")
+            return False
