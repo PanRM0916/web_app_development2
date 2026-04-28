@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}首頁 - 讀書筆記本{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="fw-bold m-0">我的閱讀清單</h2>
+        <p class="text-muted">追蹤你的學習進度與心得</p>
+    </div>
+    <div class="col-auto">
+        <a href="{{ url_for('book.add_book') }}" class="btn btn-primary shadow-sm px-4">
+            + 新增書籍
+        </a>
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for book in books %}
+    <div class="col">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge bg-info text-dark">{{ book.status }}</span>
+                    <small class="text-muted">{{ book.created_at.strftime('%Y-%m-%d') }}</small>
+                </div>
+                <h5 class="card-title fw-bold">
+                    <a href="{{ url_for('book.book_detail', id=book.id) }}" class="text-decoration-none text-dark">
+                        {{ book.title }}
+                    </a>
+                </h5>
+                <p class="card-text text-muted mb-3">{{ book.author or '未知作者' }}</p>
+                
+                <!-- 標籤 -->
+                <div class="mb-3">
+                    {% for tag in book.tags %}
+                    <span class="badge rounded-pill border text-muted fw-normal">{{ tag.name }}</span>
+                    {% endfor %}
+                </div>
+
+                <!-- 進度條 -->
+                {% if book.total_pages > 0 %}
+                {% set progress = (book.current_page / book.total_pages * 100)|round|int %}
+                <div class="progress mb-1" style="height: 6px;">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ progress }}%"></div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <small class="text-muted">進度 {{ progress }}%</small>
+                    <small class="text-muted">{{ book.current_page }} / {{ book.total_pages }} 頁</small>
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-footer bg-white border-0 pt-0 pb-3 text-center">
+                <a href="{{ url_for('book.book_detail', id=book.id) }}" class="btn btn-outline-secondary btn-sm w-100">查看詳情</a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12 text-center py-5">
+        <div class="display-1 text-muted mb-4">📖</div>
+        <h3>目前還沒有書籍</h3>
+        <p class="text-muted">點擊右上角的按鈕開始建立你的第一本筆記吧！</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

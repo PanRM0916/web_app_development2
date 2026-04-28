@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}{{ '編輯' if book else '新增' }}書籍 - 讀書筆記本{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">所有書籍</a></li>
+                <li class="breadcrumb-item active">{{ '編輯' if book else '新增' }}書籍</li>
+            </ol>
+        </nav>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h2 class="card-title fw-bold mb-4">{{ '編輯書籍資訊' if book else '建立新書籍' }}</h2>
+                
+                <form action="{{ url_for('book.edit_book', id=book.id) if book else url_for('book.add_book') }}" method="POST">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label for="title" class="form-label">書名 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="title" name="title" value="{{ book.title if book else '' }}" required placeholder="例如：原子習慣">
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="author" class="form-label">作者</label>
+                            <input type="text" class="form-control" id="author" name="author" value="{{ book.author if book else '' }}" placeholder="例如：詹姆斯·克利爾">
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="isbn" class="form-label">ISBN</label>
+                            <input type="text" class="form-control" id="isbn" name="isbn" value="{{ book.isbn if book else '' }}" placeholder="例如：9789576580949">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="total_pages" class="form-label">總頁數</label>
+                            <input type="number" class="form-control" id="total_pages" name="total_pages" value="{{ book.total_pages if book else 0 }}">
+                        </div>
+
+                        {% if book %}
+                        <div class="col-md-4">
+                            <label for="current_page" class="form-label">目前讀到頁數</label>
+                            <input type="number" class="form-control" id="current_page" name="current_page" value="{{ book.current_page or 0 }}">
+                        </div>
+                        {% endif %}
+
+                        <div class="col-md-4">
+                            <label for="status" class="form-label">閱讀狀態</label>
+                            <select class="form-select" id="status" name="status">
+                                <option value="未讀" {{ 'selected' if book and book.status == '未讀' }}>未讀</option>
+                                <option value="閱讀中" {{ 'selected' if book and book.status == '閱讀中' }}>閱讀中</option>
+                                <option value="已完讀" {{ 'selected' if book and book.status == '已完讀' }}>已完讀</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="tags" class="form-label">標籤 (以逗號隔開)</label>
+                            <input type="text" class="form-control" id="tags" name="tags" value="{{ tags_str if tags_str else '' }}" placeholder="例如：自我成長, 心理學, 筆記">
+                            <div class="form-text">標籤可以幫助你快速分類書籍。</div>
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <hr>
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ url_for('main.index') }}" class="btn btn-light px-4">取消</a>
+                                <button type="submit" class="btn btn-primary px-5 shadow-sm">儲存設定</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

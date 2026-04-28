@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}{{ '編輯' if note else '新增' }}筆記 - {{ book.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">所有書籍</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('book.book_detail', id=book.id) }}">{{ book.title }}</a></li>
+                <li class="breadcrumb-item active">{{ '編輯' if note else '新增' }}筆記</li>
+            </ol>
+        </nav>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h3 class="card-title fw-bold mb-1">{{ '編輯筆記' if note else '記錄讀書心得' }}</h3>
+                <p class="text-muted mb-4">針對《{{ book.title }}》進行記錄</p>
+                
+                <form action="{{ url_for('note.edit_note', id=note.id) if note else url_for('note.add_note', book_id=book.id) }}" method="POST">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label for="content" class="form-label">內容 <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="content" name="content" rows="12" required placeholder="在這裡寫下你的感悟、摘錄或總結...">{{ note.content if note else '' }}</textarea>
+                            <div class="form-text mt-2 small">支援 Markdown 語法輸入。</div>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="tags" class="form-label">筆記標籤 (以逗號隔開)</label>
+                            <input type="text" class="form-control" id="tags" name="tags" value="{{ tags_str if tags_str else '' }}" placeholder="例如：金句, 重點, 實踐計畫">
+                            <div class="form-text small">你可以為特定的一條筆記加上標籤。</div>
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <hr>
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ url_for('book.book_detail', id=book.id) }}" class="btn btn-light px-4">取消</a>
+                                <button type="submit" class="btn btn-dark px-5 shadow-sm">儲存筆記</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
